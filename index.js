@@ -88,6 +88,13 @@ app.post('/tx/:id', function (request, response) {
     return;
   }
 
+  // transform the string to a number
+  amount = parseInt(amount);
+  if (!amount) {
+    response.send('Error! Amount is not a numeric value!');
+    return;
+  }
+
   // find the user associated with the amount
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM p_user where id = $1',
@@ -111,7 +118,7 @@ app.post('/tx/:id', function (request, response) {
                 function(err, result) {
                    if(err) return rollback(client);
                    client.query(
-                     'INSERT INTO p_user(points) VALUES($1) WHERE id = $2', 
+                     'UPDATE p_user SET (points) = (points + $1) WHERE id = $2', 
                      [amount, userId],
                      function(err, result) {
                       if(err) return rollback(client);
