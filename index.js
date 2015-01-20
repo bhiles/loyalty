@@ -92,7 +92,7 @@ app.get('/user/:id', function (request, response) {
 })
 
 // Create a transaction
-app.post('/tx/:id', function (request, response) {
+app.post('/user/:id/tx', function (request, response) {
   var userId = request.params.id;
   var amount = request.body.amount;
 
