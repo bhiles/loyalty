@@ -2,7 +2,7 @@
 
 This is a solution to the problem posed [here](https://gist.github.com/mikeybtn/0c5f3a8a1b8ac549b73f).
 
-It's written in Node.js using Express.js framework and a PostgeSQL database and hosted on Heroku.
+It's written in Node.js using the Express.js framework and a PostgeSQL database and hosted on Heroku.
 
 Database migration files are located [here](db/).
 
