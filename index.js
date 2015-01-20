@@ -45,7 +45,7 @@ app.post('/user', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query(
       'INSERT INTO p_user (email, firstName, lastName) values ($1, $2, $3);',
-      [p.email.trim(), p.first.trim(), p.last.trim()],
+      [b.email.trim(), b.first.trim(), b.last.trim()],
       function(err, result) {
         done();
         if (err)
