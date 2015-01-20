@@ -58,7 +58,7 @@ app.post('/user', function (request, response) {
 
 app.get('/user/:id', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM user where id = $1',
+    client.query('SELECT * FROM p_user where id = $1',
                  [request.params.id],
                  function(err, result) {
       done();
