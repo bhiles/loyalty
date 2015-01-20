@@ -136,6 +136,25 @@ app.post('/tx/:id', function (request, response) {
   });  
 })
 
+app.get('/user/:id/tx', function (request, response) {
+  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+    client.query('SELECT * FROM tx where p_user_id = $1',
+                 [request.params.id],
+                 function(err, result) {
+      done();
+      if (err) { 
+        console.error(err); response.send("Error " + err); 
+      } else { 
+        if (result.rows.length == 0) {
+          response.send("Error! No user was found for id: " + request.params.id);
+        } else { 
+          response.send(result.rows); 
+        }
+      }
+    });
+  });
+})
+
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });
