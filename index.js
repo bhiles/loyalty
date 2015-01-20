@@ -36,6 +36,16 @@ function isEmpty(str) {
     return (!str || 0 === str.length || !str.trim());
 }
 
+var rollback = function(client) {
+  //terminating a client connection will
+  //automatically rollback any uncommitted transactions
+  //so while it's not technically mandatory to call
+  //ROLLBACK it is cleaner and more correct
+  client.query('ROLLBACK', function() {
+    client.end();
+  });
+};
+
 // Create a user
 app.post('/user', function (request, response) {
   var b = request.body;
@@ -111,7 +121,7 @@ app.post('/tx/:id', function (request, response) {
         if (result.rows.length == 0) {
           response.send("Error! No user was found for id: " + request.params.id);
         } else { 
-          
+
           // for a credit, the transaction can always happen
           if (amount >= 0) {
             client.query('BEGIN', function(err, result) {
@@ -131,9 +141,39 @@ app.post('/tx/:id', function (request, response) {
                     });
                 });
             });
+          } else {
+
+           // for a debit, we'll need to verify afterwards that the
+           // funds aren't overdrawn
+           var debit = 0 - amount;
+           client.query('BEGIN', function(err, result) {
+             if(err) return rollback(client);
+             client.query(
+               'SELECT points FROM p_user WHERE id = $1',
+               [userId], 
+               function(err, result) {
+                  if(err) return rollback(client);
+                  if(result.row[0].points < debit) {
+                    response.send('Funds are insufficient :(');
+                    return rollback(client);
+                  }
+                  client.query(
+                    'INSERT INTO tx VALUES ($1, $2)',
+                    [userId, amount], 
+                    function(err, result) {
+                      client.query(
+                        'UPDATE p_user SET (points) = (points + $1) WHERE id = $2', 
+                        [amount, userId],
+                        function(err, result) {
+                          if(err) return rollback(client);
+                          client.query('COMMIT', client.end.bind(client));
+                          response.send("Successful transaction!");  
+                      });
+                  });
+              
+             });           
+           });
           }
-         // for a debit, we'll need to verify afterwards that the
-         // funds aren't overdrawn
         }
       }
     });
