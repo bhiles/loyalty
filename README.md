@@ -1,36 +1,38 @@
-# node-js-getting-started
+# Loyalty
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+This is a solution to the problem posed [here](https://gist.github.com/mikeybtn/0c5f3a8a1b8ac549b73f).
 
-This application support the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
+It's written in Node.js using Express.js framework and a PostgeSQL database and hosted on Heroku.
 
-## Running Locally
+Database migration files are located [here](db/).
 
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
+### API
 
-```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
-$ npm install
-$ npm start
-```
+#### Create a user (POST /user)
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+    curl https://vast-bayou-6783.herokuapp.com/user -d "email=bennett@gmail.com&first=bennett&last=hiles"
 
-## Deploying to Heroku
+#### Get a user (GET /user/:id)
 
-```
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
+    https://vast-bayou-6783.herokuapp.com/user/1
 
-## Documentation
+#### Create a transaction (POST /user/:id/tx)
 
-For more information about using Node.js on Heroku, see these Dev Center articles:
+A credit looks like:
 
-- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
-- [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
+    curl https://vast-bayou-6783.herokuapp.com/tx/1 -d "amount=20"
+
+A debit looks like:
+
+    curl https://vast-bayou-6783.herokuapp.com/tx/1 -d "amount=-10"
+
+#### Get all transactions for a user (GET /user/:id/tx)
+
+    https://vast-bayou-6783.herokuapp.com/user/
+
+### Future Plans
+
+* Create tests
+* Throw an error for invalid email addresses
+* Return error status codes when errors occur
+
