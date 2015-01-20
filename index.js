@@ -62,10 +62,15 @@ app.get('/user/:id', function (request, response) {
                  [request.params.id],
                  function(err, result) {
       done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.send(result.rows); }
+      if (err) { 
+        console.error(err); response.send("Error " + err); 
+      } else { 
+        if (result.rows.length < 0) {
+          response.send("Error! No user was found for id: " + request.params.id);
+        } else { 
+          response.send(result.rows[0]); 
+        }
+      }
     });
   });
 })
