@@ -28,7 +28,7 @@ A debit looks like:
 
 #### Get all transactions for a user (GET /user/:id/tx)
 
-    https://vast-bayou-6783.herokuapp.com/user/
+    https://vast-bayou-6783.herokuapp.com/user/1/tx
 
 ### Future Plans
 
