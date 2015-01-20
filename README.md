@@ -30,9 +30,15 @@ A debit looks like:
 
     https://vast-bayou-6783.herokuapp.com/user/1/tx
 
+### Assumptions
+
+* varchar(120) should be able to handle for email (same for first and last name)
+* "it should fail" (from the problem description) is handled by the application returning with an error message
+
 ### Future Plans
 
 * Create tests
 * Throw an error for invalid email addresses
 * Return error status codes when errors occur
+* Getting transactions from a user the doesn't exist should return an error instead of an empty array
 
