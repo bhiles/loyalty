@@ -8,6 +8,5 @@
 
 CREATE TABLE tx (
        p_user_id bigint NOT NULL,
-       amount    bigint NOT NULL,
-       type      varchar(6) 
+       amount    bigint NOT NULL
 );

@@ -76,6 +76,59 @@ app.get('/user/:id', function (request, response) {
   });
 })
 
+// Transaction functions
+
+app.post('/tx/:id', function (request, response) {
+  var userId = request.params.id;
+  var amount = request.body.amount;
+
+  // verify required fields exist
+  if (isEmpty(userId) || isEmpty(amount)) { 
+    response.send('Error!  One of the necesasry fields are missing!'); 
+    return;
+  }
+
+  // find the user associated with the amount
+  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+    client.query('SELECT * FROM p_user where id = $1',
+                 [userId],
+                 function(err, result) {
+      done();
+      if (err) { 
+        console.error(err); response.send("Error " + err); 
+      } else { 
+        if (result.rows.length == 0) {
+          response.send("Error! No user was found for id: " + request.params.id);
+        } else { 
+          
+          // for a credit, the transaction can always happen
+          if (amount >= 0) {
+            client.query('BEGIN', function(err, result) {
+              if(err) return rollback(client);
+              client.query(
+                'INSERT INTO tx VALUES ($1, $2)',
+                [userId, amount], 
+                function(err, result) {
+                   if(err) return rollback(client);
+                   client.query(
+                     'INSERT INTO p_user(points) VALUES($1) WHERE id = $2', 
+                     [amount, userId],
+                     function(err, result) {
+                      if(err) return rollback(client);
+                      client.query('COMMIT', client.end.bind(client));
+                      response.send("Successful transaction!");  
+                    });
+                });
+            });
+          }
+         // for a debit, we'll need to verify afterwards that the
+         // funds aren't overdrawn
+        }
+      }
+    });
+  });  
+})
+
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });
