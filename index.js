@@ -3,12 +3,16 @@ var app = express();
 var bodyParser = require('body-parser')
 var pg = require('pg');
 
+// Application setup
+
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 
+
+// Misc routes
 
 app.get('/', function(request, response) {
   response.send('Hello World! and Bennett!');
@@ -26,13 +30,13 @@ app.get('/db', function (request, response) {
   });
 })
 
+// Helper functions
 
 function isEmpty(str) {
     return (!str || 0 === str.length || !str.trim());
 }
 
-// User functions
-
+// Create a user
 app.post('/user', function (request, response) {
   var b = request.body;
 
@@ -57,6 +61,7 @@ app.post('/user', function (request, response) {
   });
 })
 
+// Fetch a specific user
 app.get('/user/:id', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM p_user where id = $1',
@@ -76,8 +81,7 @@ app.get('/user/:id', function (request, response) {
   });
 })
 
-// Transaction functions
-
+// Create a transaction
 app.post('/tx/:id', function (request, response) {
   var userId = request.params.id;
   var amount = request.body.amount;
@@ -136,6 +140,7 @@ app.post('/tx/:id', function (request, response) {
   });  
 })
 
+// List all transactions for a user
 app.get('/user/:id/tx', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM tx where p_user_id = $1',
@@ -155,6 +160,7 @@ app.get('/user/:id/tx', function (request, response) {
   });
 })
 
+// Start the application
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });
