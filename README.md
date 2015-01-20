@@ -32,13 +32,13 @@ A debit looks like:
 
 ### Assumptions
 
-* varchar(120) should be able to handle for email (same for first and last name)
+* varchar(120) should be able to handle enough characters for email (same for first and last name)
 * "it should fail" (from the problem description) is handled by the application returning with an error message
 
 ### Future Plans
 
 * Create tests
-* Throw an error for invalid email addresses
 * Return error status codes when errors occur
-* Getting transactions from a user the doesn't exist should return an error instead of an empty array
+* Throw an error for invalid email addresses
+* /user/:id/tx for a user that doesn't exist should return an error instead of an empty array
 
