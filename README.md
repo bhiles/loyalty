@@ -20,11 +20,11 @@ Database migration files are located [here](db/).
 
 A credit looks like:
 
-    curl https://vast-bayou-6783.herokuapp.com/tx/1 -d "amount=20"
+    curl https://vast-bayou-6783.herokuapp.com/user/1/tx -d "amount=20"
 
 A debit looks like:
 
-    curl https://vast-bayou-6783.herokuapp.com/tx/1 -d "amount=-10"
+    curl https://vast-bayou-6783.herokuapp.com/user/1/tx -d "amount=-10"
 
 #### Get all transactions for a user (GET /user/:id/tx)
 
