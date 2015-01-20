@@ -39,6 +39,7 @@ A debit looks like:
 
 * Create tests
 * Return error status codes when errors occur
+* When you create a new user the API response should be the new record as a JSON object
 * Throw an error for invalid email addresses
 * /user/:id/tx for a user that doesn't exist should return an error instead of an empty array
 
