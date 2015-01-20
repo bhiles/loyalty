@@ -153,7 +153,7 @@ app.post('/tx/:id', function (request, response) {
                [userId], 
                function(err, result) {
                   if(err) return rollback(client);
-                  if(result.row[0].points < debit) {
+                  if(result.rows[0].points < debit) {
                     response.send('Funds are insufficient :(');
                     return rollback(client);
                   }
