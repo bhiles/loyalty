@@ -3,7 +3,8 @@
        email      varchar(120) NOT NULL,
        firstName  varchar(120) NOT NULL,
        lastName   varchar(120) NOT NULL,
-       points     bigint DEFAULT 0
+       points     bigint DEFAULT 0,
+       password   varchar(40) NOT NULL
 );
 
 CREATE TABLE tx (

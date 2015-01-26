@@ -3,6 +3,7 @@ var app = express();
 var bodyParser = require('body-parser')
 var pg = require('pg');
 var User = require('./models/user');
+var crypto = require('crypto');
 
 // Application setup
 
@@ -49,6 +50,10 @@ app.post('/user', function (request, response) {
 
   var u = new User(null, b.first, b.last, b.email);
 
+  // create the password
+  var hash = crypto.createHash('md5').update(crypto.randomBytes(12)).digest('hex');
+  u.password = hash;
+
   // insert the values into the database  
   u.save(
     function(err, user) {
@@ -63,11 +68,16 @@ app.post('/user', function (request, response) {
 
 // Fetch a specific user
 app.get('/user/:id', function (request, response) {
-  User.get(request.params.id, function(err, user) {
+  User.get(request.params.id, function(err, user, password) {
+
     if (err) {
       response.status(500).send(err.message);
     } else {
-      response.json(user);
+      if (request.param('password') != password) {
+        response.status(401).send("You don't have access to this user");
+      } else {
+        response.json(user);  
+      }
     }
   });
 })
