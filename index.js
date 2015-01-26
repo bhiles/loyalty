@@ -2,6 +2,10 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser')
 var pg = require('pg');
+var user = require('./models/user');
+
+console.log("database url is " + process.env.DATABASE_URL);
+
 
 // Application setup
 
@@ -44,19 +48,17 @@ app.post('/user', function (request, response) {
     return;
   }
 
+  var u = new User(null, b.first, b.last, b.email);
+
   // insert the values into the database  
-  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query(
-      'INSERT INTO p_user (email, firstName, lastName) values ($1, $2, $3);',
-      [b.email.trim(), b.first.trim(), b.last.trim()],
-      function(err, result) {
+  u.save(
+    function(err, result) {
         done();
         if (err)
           { console.error(err); response.send("Error " + err); }
         else
           { response.send(result.rows); }
-    });
-  });
+    });  
 })
 
 // Fetch a specific user
