@@ -39,6 +39,8 @@ var rollback = function(client) {
 app.post('/user', function (request, response) {
   var b = request.body;
 
+  console.log('request body: ', b);
+
   // verify required fields exist
   if (isEmpty(b.email) || isEmpty(b.first) || isEmpty(b.last)) { 
     response.send('Error!  One of the necesasry fields are missing!'); 
@@ -49,36 +51,24 @@ app.post('/user', function (request, response) {
 
   // insert the values into the database  
   u.save(
-    function(err, result) {
-        done();
+    function(err, user) {
         if (err) { 
             console.error(err); 
             response.send("Error " + err); 
         } else { 
-          var data = result.rows[0];
-          var createdUser = new User(data['id'], data['firstName'], data['lastName'], data['email']);
-          response.send(createdUser); 
+          response.send(user); 
         }
     });  
 })
 
 // Fetch a specific user
 app.get('/user/:id', function (request, response) {
-  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM p_user where id = $1',
-                 [request.params.id],
-                 function(err, result) {
-      done();
-      if (err) { 
-        console.error(err); response.send("Error " + err); 
-      } else { 
-        if (result.rows.length == 0) {
-          response.send("Error! No user was found for id: " + request.params.id);
-        } else { 
-          response.send(result.rows[0]); 
-        }
-      }
-    });
+  User.get(request.params.id, function(err, user) {
+    if (err) {
+      response.status(500).send(err.message);
+    } else {
+      response.json(user);
+    }
   });
 })
 
