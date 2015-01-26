@@ -1,6 +1,6 @@
 var pg = require('pg');
 
-function User(id, fistName, lastName, email) {
+function User(id, firstName, lastName, email) {
 	this.id = id;
 	this.firstName = firstName.trim();
 	this.lastName = lastName.trim();
