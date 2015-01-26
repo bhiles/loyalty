@@ -2,10 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser')
 var pg = require('pg');
-var user = require('./models/user');
-
-console.log("database url is " + process.env.DATABASE_URL);
-
+var User = require('./models/user');
 
 // Application setup
 
@@ -54,10 +51,14 @@ app.post('/user', function (request, response) {
   u.save(
     function(err, result) {
         done();
-        if (err)
-          { console.error(err); response.send("Error " + err); }
-        else
-          { response.send(result.rows); }
+        if (err) { 
+            console.error(err); 
+            response.send("Error " + err); 
+        } else { 
+          var data = result.rows[0];
+          var createdUser = new User(data['id'], data['firstName'], data['lastName'], data['email']);
+          response.send(createdUser); 
+        }
     });  
 })
 
